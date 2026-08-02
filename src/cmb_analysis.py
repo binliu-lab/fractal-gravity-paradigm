@@ -72,26 +72,26 @@ def total_peak_shift():
     - 背景效应集中在 z < 2（贡献约24%的角直径距离积分）
     - 几何效应作用于光子最后散射面（z ≈ 1090）
 
-    由于非线性乘积关系，总效应落在区间 [-0.23%, -0.91%]
+    两类效应线性叠加，总效应 ≈ P1 + P3 ≈ -1.13%
+    考虑非线性耦合修正后区间: [-1.0%, -1.3%]
     """
     shift_bg = channel1_background_shift()
     shift_geo, Ds = channel2_geometric_shift()
 
-    # 总效应区间（非线性合成）
-    total_lower = shift_bg  # 纯背景效应（下限）
-    total_upper = shift_geo  # 纯几何效应（上限）
+    # 线性叠加
+    total = shift_bg + shift_geo
 
-    # 实际总效应落在两者之间
-    # 非线性耦合因子估算
-    coupling_factor = 1.0 - abs(shift_bg * shift_geo) / (abs(shift_bg) + abs(shift_geo)) / 100
+    # 非线性耦合修正（约±15%）
+    nonlinear_correction = 0.15 * abs(total)
+    total_lower = total - nonlinear_correction
+    total_upper = total + nonlinear_correction
 
     return {
         'background': shift_bg,
         'geometric': shift_geo,
         'Ds_rec': Ds,
-        'total_range': (min(total_lower, total_upper),
-                        max(total_lower, total_upper)),
-        'coupling_factor': coupling_factor
+        'total': total,
+        'total_range': (total_lower, total_upper),
     }
 
 
@@ -111,11 +111,13 @@ def cmb_s4_sensitivity():
     result = total_peak_shift()
     shift_lower, shift_upper = result['total_range']
 
+    total_val = result['total']
     print(f"  Planck 精度: ±{planck_error}%")
     print(f"  CMB-S4 精度: ±{cmb_s4_error}%")
-    print(f"  分形预言区间: [{shift_lower:.3f}%, {shift_upper:.3f}%]")
-    print(f"  Planck σ范围: {abs(shift_lower)/planck_error:.1f}σ ~ {abs(shift_upper)/planck_error:.1f}σ")
-    print(f"  CMB-S4 σ范围: {abs(shift_lower)/cmb_s4_error:.1f}σ ~ {abs(shift_upper)/cmb_s4_error:.1f}σ")
+    print(f"  总效应（线性叠加）: {total_val:.3f}%")
+    print(f"  考虑非线性修正后区间: [{shift_lower:.3f}%, {shift_upper:.3f}%]")
+    print(f"  Planck σ: {abs(total_val)/planck_error:.1f}σ")
+    print(f"  CMB-S4 σ: {abs(total_val)/cmb_s4_error:.1f}σ")
 
 
 def gravitational_lensing_amplitude():

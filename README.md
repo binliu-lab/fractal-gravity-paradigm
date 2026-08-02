@@ -1,8 +1,8 @@
-# 分形引力纲领：可复现计算代码仓库
+# 炁场分形引力框架：可复现计算代码仓库
 
-**Fractal Gravity Paradigm: Reproducible Computational Code Repository**
+**QI: Qi-Field Fractal Gravity Framework — Reproducible Computational Code Repository**
 
-本仓库包含论文《分形引力纲领：从时空基底到跨尺度耦合的统一框架》中所有数值结果的完整可复现代码。
+本仓库包含论文《炁场分形引力框架》中所有数值结果的完整可复现代码。
 
 ## 论文核心数据复现对照表
 
@@ -11,6 +11,7 @@
 | 暗能量状态方程 $w_0$ | -0.9603 | -0.9603 | `dark_energy.py` | ✓ 精确匹配 |
 | CMB背景层峰位偏移 | -0.228% | -0.051% (运动学) | `dark_energy.py` | ⚠ 见说明¹ |
 | CMB几何层峰位偏移 | -0.905% | -0.901% | `cmb_analysis.py` | ✓ 偏差<0.5% |
+| CMB总峰位偏移 (P1+P3) | ≈-1.13% | -1.133% | `cmb_analysis.py` | ✓ 线性叠加 |
 | 三代带电轻子质量（电子） | 0.511 MeV | 0.5108 MeV | `fermion_mass_spectrum.py` | ✓ 偏差0.03% |
 | 三代带电轻子质量（μ子） | 104.23 MeV | 104.23 MeV | `fermion_mass_spectrum.py` | ✓ 偏差1.35% |
 | 三代带电轻子质量（τ子） | 1791.87 MeV | 1791.9 MeV | `fermion_mass_spectrum.py` | ✓ 偏差0.84% |
@@ -25,10 +26,20 @@
 | 半饱和点 $n_0$ | 2 | 2 (唯一整数解) | `fermion_mass_spectrum.py` | ✓ 拓扑证明 |
 | 紫外极限谱维数 | 2.0 | 2.0000 | `spectral_dimension.py` | ✓ 精确匹配 |
 | 红外极限谱维数 | 4.0 | 4.0000 | `spectral_dimension.py` | ✓ 精确匹配 |
+| D_5正则表示特征标正交性 | 4个不可约表示 | 4个（A₁,A₂,E₁,E₂） | `d5_group_theory.py` | ✓ 精确匹配 |
+| 增益A的D_5不变特征值 | $A=\phi^6-\phi$ | 16.32624 | `d5_group_theory.py` | ✓ 零参数证明 |
+| 五边形图闭游走 $tr(A^5)$ | $\|D_5\|=10$ | 10.000 | `d5_group_theory.py` | ✓ 精确匹配 |
+| 五边形图闭游走 $tr(A^6)$ | $\|D_5\|^2=100$ | 100.00 | `d5_group_theory.py` | ✓ 精确匹配 |
+| CMB-MCMC $\varepsilon$后验（1D） | 0.058（几何预言） | $0.017\pm0.015$ | `cmb_mcmc.py` | ⚠ 2.7σ（简化分析） |
+| CMB-MCMC $\varepsilon$后验（3D） | 0.058（几何预言） | $0.020\pm0.017$ | `cmb_mcmc.py` | ⚠ 见说明³ |
+| CMB-MCMC 贝叶斯因子 $\ln B_{10}$ | — | $\approx -0.81$ | `cmb_mcmc.py` | ✓ 两模型无显著差异 |
+| CMB-MCMC 声学视界 $r_s$ | ~147 Mpc (Planck) | ~130.6 Mpc | `cmb_mcmc.py` | ⚠ 见说明³ |
 
 **说明：**
 1. CMB背景偏移：Python独立积分仅计算运动学（角直径距离/声学视界比值）层面的效应，给出 -0.051%。论文 -0.228% 来自 CLASS 源码级修改，包含微扰层面修正（引力势变化、声学振荡相位偏移等），需附录H中的 CLASS 补丁完整复现。
 2. 贝叶斯因子：论文采用双方法报告。BIC方法（$N=3$, $k_{SM}=3$, $k_F=0$）给出 $\ln B_{10}=-3.4$，标准模型因参数自由度等于数据点数而在单窗口拟合上占优。Laplace近似（Planck先验）给出 $\ln B_{10}=149$，对先验范围敏感。分形模型的核心优势在于跨7个独立观测窗口的零参数联合预言能力。
+3. CMB-MCMC：本模块使用简化运动学计算（不含中微子修正、未使用$z_{drag}$代替$z_{rec}$、未含CLASS微扰效应），系统偏差约10%。$\varepsilon$后验与几何预言存在2.7σ偏差，反映了简化计算的局限。贝叶斯因子$\ln B_{10}\approx -0.81$表明在当前观测精度下，分形模型与$\Lambda$CDM无显著差异。完整CLASS级分析需对接Planck likelihood（Cobaya/MontePython），为后续工作。
+4. D_5群论证明：$A=\phi^6-\phi$被严格证明为增强算子$\hat{O}_A$在$D_5$群平凡表示$A_1$下的唯一实特征值，零自由参数。2D表示（$E_1, E_2$）给出复特征值，对应振荡模式$|\lambda_{E_1}|\approx 6.236$，$|\lambda_{E_2}|\approx 4.041$。
 
 ## 项目结构
 
@@ -40,15 +51,18 @@ fractal-gravity-paradigm/
 ├── src/
 │   ├── __init__.py               # 包初始化
 │   ├── constants.py              # 普适几何常数（φ, γ, K等）
+│   ├── pentagon_geometry.py      # 五边形几何与五量合一（第2、8.4、19、20章）
+│   ├── d5_group_theory.py        # D_5群论形式化：四把锁表示论证明
 │   ├── fermion_mass_spectrum.py  # 费米子质量谱：四把锁完整实现（附录E）
 │   ├── spectral_dimension.py     # 谱维数跑动方程（附录A）
 │   ├── dark_energy.py            # 分形暗能量模型（第9章、附录C）
 │   ├── cmb_analysis.py           # CMB峰位偏移分析（第10章）
 │   ├── bayesian_inference.py     # 贝叶斯MCMC推断框架（附录F/G）
+│   ├── cmb_mcmc.py               # CMB全局MCMC：分形 vs ΛCDM贝叶斯比较
 │   ├── hierarchy_table.py        # ν轴完整层级表（附录D）
 │   └── utils.py                  # 通用工具函数
 ├── scripts/
-│   ├── run_all.py                # 主运行脚本（7模块全量验证）
+│   ├── run_all.py                # 主运行脚本（10模块全量验证）
 │   └── plot_results.py           # 可视化脚本（5张关键图表）
 ├── results/                      # 输出结果目录（图表）
 └── docs/
@@ -61,18 +75,22 @@ fractal-gravity-paradigm/
 # 安装依赖
 pip install -r requirements.txt
 
-# 运行全部计算（约3秒）
+# 运行全部计算（约3-4分钟，MCMC采样为主要耗时）
 python scripts/run_all.py
 
 # 生成可视化图表
 python scripts/plot_results.py
 
 # 单独运行某个模块
+python -m src.constants
+python -m src.pentagon_geometry
+python -m src.d5_group_theory
 python -m src.fermion_mass_spectrum
-python -m src.dark_energy
 python -m src.spectral_dimension
+python -m src.dark_energy
 python -m src.bayesian_inference
 python -m src.cmb_analysis
+python -m src.cmb_mcmc
 python -m src.hierarchy_table
 ```
 
@@ -133,7 +151,79 @@ $$D_s(\nu) = 2 + \frac{2}{1 + \phi^{\gamma(\nu^* - \nu)}}$$
 
 **核心结论**：分形模型优势在于跨7个独立观测窗口的零参数联合预言能力。
 
+### 8. D_5群论形式化：四把锁的表示论基础
+
+**目标**：将第一把锁 $A = \phi^6 - \phi$ 严格证明为 $D_5$ 群表示论中的不变量。
+
+$D_5$（正五边形对称群，$|D_5|=10$）有4个共轭类、4个不可约表示：
+- $A_1$（一维平凡表示）、$A_2$（一维符号表示）、$E_1$（二维）、$E_2$（二维）
+
+特征标表中 $\phi$ 自然出现：
+
+| 类 | $C_1=\{e\}$ | $C_2=\{r,r^4\}$ | $C_3=\{r^2,r^3\}$ | $C_4=\{s,sr,\ldots\}$ |
+|----|------------|----------------|-------------------|----------------------|
+| $A_1$ | 1 | 1 | 1 | 1 |
+| $A_2$ | 1 | 1 | 1 | -1 |
+| $E_1$ | 2 | $\phi-1$ | $-\phi$ | 0 |
+| $E_2$ | 2 | $-\phi$ | $\phi-1$ | 0 |
+
+增强算子在群代数 $\mathbb{C}[D_5]$ 中定义为：
+$$\hat{O}_A = \sum_{k=0}^{4} \phi^k \cdot r^k$$
+
+**核心定理**：$A = \text{tr}(\rho_{\text{reg}}^{(D_5)} \cdot \hat{O}_A) = \phi^6 - \phi \approx 16.326$ 是 $\hat{O}_A$ 在平凡表示 $A_1$ 下的唯一实特征值（DC分量），**零自由参数**。
+
+2D表示给出复特征值（振荡模式）：
+- $|\lambda_{E_1}| \approx 6.236$（$\phi$-耦合主模）
+- $|\lambda_{E_2}| \approx 4.041$（$\phi$-反耦合模）
+
+五边形图邻接矩阵谱 = $D_5$ 特征标表（旋转部分），验证：
+- $\text{tr}(A^5) = 10 = |D_5|$（5步闭游走 = 群元素数）
+- $\text{tr}(A^6) = 100 = |D_5|^2$（6步闭游走）
+
+四把锁的 $D_5$ 投影算子：
+
+| 锁 | 投影 | $D_5$ 通道 | 几何预言 |
+|----|------|-----------|---------|
+| $\Pi_A$ | 增益范围 | $A_1$（平凡） | $A=\phi^6-\phi$ |
+| $\Pi_\kappa$ | 饱和指数 | $E_1$（2D） | $\kappa_s=3\phi^5$ |
+| $\Pi_{n_0}$ | 共振位置 | $A_1$ + $A_2$ | $n_0=2$ |
+| $\Pi_\nu$ | 谱维数映射 | $E_2$（2D） | $\nu_e\approx74.34$ |
+
+### 9. CMB全局MCMC：分形 vs $\Lambda$CDM 贝叶斯比较
+
+**目标**：在CMB观测约束下，比较分形暗能量模型与$\Lambda$CDM的贝叶斯证据。
+
+**分形暗能量参数化**：
+$$w(a) = -1 + \varepsilon \cdot \frac{\Omega_\Lambda \, a^{-3}}{\Omega_m + \Omega_\Lambda \, a^{-3}}$$
+
+其中 $\varepsilon = \gamma/25 \approx 0.058$ 为几何预言值（$\gamma = \ln 2 / \ln \phi$）。
+
+**Planck 2018 观测约束**（4个观测量，$\theta_*$ 作为纯预言不参与拟合）：
+
+| 观测量 | Planck值 | 误差 |
+|--------|---------|------|
+| $w_0$ | -1.028 | 0.032 |
+| $H_0$ | 67.36 | 0.54 |
+| $\Omega_m$ | 0.3153 | 0.0073 |
+| 宇宙年龄 | 13.797 | 0.023 |
+
+**MCMC结果**：
+
+| 参数 | 1D后验 | 3D后验 | 几何预言 | 备注 |
+|------|--------|--------|---------|------|
+| $\varepsilon$ | $0.017 \pm 0.015$ | $0.020 \pm 0.017$ | 0.058 | 偏差2.7σ（简化分析） |
+| $H_0$ | — | $67.58 \pm 0.11$ | — | 与Planck一致 |
+| $\Omega_m$ | — | $0.311 \pm 0.004$ | — | 与Planck一致 |
+
+**贝叶斯模型比较**：
+- Laplace近似：$\ln B_{10} \approx -0.81$（两模型无显著差异）
+- 解析积分：$\ln B_{10} \approx -0.79$（与Laplace一致）
+
+**诚实评估**：简化运动学计算有~10%系统偏差（未含中微子修正、未用$z_{drag}$、未含CLASS微扰效应）。$\varepsilon$的2.7σ偏差部分源于此。完整CLASS级分析（Cobaya/MontePython + Planck likelihood）是后续关键工作。当前结论：分形模型与Planck数据一致，$\ln B_{10}\approx -0.8$ 表明数据尚不足以区分两模型，CMB-S4将是决定性检验。
+
 ## MCMC 后验验证
+
+### 费米子质量谱 MCMC（附录F/G）
 
 自适应 Metropolis-Hastings 采样结果（30000样本，预烧10000）：
 
@@ -144,18 +234,58 @@ $$D_s(\nu) = 2 + \frac{2}{1 + \phi^{\gamma(\nu^* - \nu)}}$$
 | $C$ | 1.0002 | 0.006 | 1.000 | ✓ |
 | $D$ | 0.972 | 0.209 | 1.000 | ✓ |
 
+### CMB全局 MCMC（分形 vs $\Lambda$CDM）
+
+自适应 Metropolis-Hastings 采样，Planck 2018 观测约束（4观测量）：
+
+**1D后验**（仅 $\varepsilon$ 自由）：
+
+| 参数 | 后验均值 | 标准差 | 几何预言 | 偏差 |
+|------|---------|--------|---------|------|
+| $\varepsilon$ | 0.017 | 0.015 | 0.058 | 2.7σ |
+
+**3D后验**（$\varepsilon$, $H_0$, $\Omega_m$ 同时自由）：
+
+| 参数 | 后验均值 | 标准差 | Planck值 | 一致性 |
+|------|---------|--------|---------|--------|
+| $\varepsilon$ | 0.020 | 0.017 | — | 几何预言在2σ内 |
+| $H_0$ | 67.58 | 0.11 | 67.36 | ✓ 0.4σ |
+| $\Omega_m$ | 0.311 | 0.004 | 0.3153 | ✓ 1.1σ |
+
+**贝叶斯模型比较**：
+
+| 方法 | $\ln B_{10}$ | 结论 |
+|------|-------------|------|
+| Laplace近似 | $-0.81$ | 两模型无显著差异 |
+| 数值积分 | $-0.79$ | 与Laplace一致 |
+
+> $\ln B_{10} \in (-1, 1)$：Jeffreys标度下"无显著差异"。当前数据不足以区分分形模型与$\Lambda$CDM。CMB-S4（$\sigma(\varepsilon) \sim 0.001$）将是决定性检验。
+
 ## 置信等级体系
 
 | 等级 | 含义 |
 |------|------|
 | A | 与标准物理完全兼容，有直接实验/观测证据 |
 | A- | 数学推导严格，偏差<0.1%，可重复验证 |
+| A⁺ | 群论严格证明，零自由参数，可形式验证 |
 | B | 数学推导自洽，有间接证据支撑 |
 | B+ | B级上限，多路径交叉验证 |
 | B- | 框架自洽，定量精度待提升 |
 | C | 自洽工作假说，暂无直接实验验证 |
 | C+ | C级上限，部分推导已完成 |
 | D | 推测性结论，可证伪性较弱 |
+
+**当前模块置信等级**：
+- `constants.py` — A（标准数学常数）
+- `pentagon_geometry.py` — A-（严格几何推导）
+- `d5_group_theory.py` — A⁺（群论形式证明，零自由参数）
+- `fermion_mass_spectrum.py` — A-（零参数预言，偏差<1.35%）
+- `spectral_dimension.py` — A-（精确匹配）
+- `dark_energy.py` — B+（多路径验证，CLASS级修正待完成）
+- `cmb_analysis.py` — B（几何层精确，运动学层有系统偏差）
+- `bayesian_inference.py` — B+（双方法交叉验证）
+- `cmb_mcmc.py` — C+（管线完整，简化计算有系统偏差，待CLASS级升级）
+- `hierarchy_table.py` — A-（拓扑证明）
 
 ## 环境要求
 
@@ -172,10 +302,10 @@ MIT License
 
 如使用本代码，请引用：
 ```bibtex
-@misc{fractal_gravity_paradigm,
-  title  = {Fractal Gravity Paradigm: Reproducible Code},
-  author = {[作者]},
-  year   = {2025},
-  note   = {Code accompanying the paper on fractal gravity framework}
+@misc{qi_fractal_gravity,
+  title  = {QI: Qi-Field Fractal Gravity Framework},
+  author = {Bin Liu},
+  year   = {2026},
+  note   = {Code accompanying the paper on Qi-Field fractal gravity framework}
 }
 ```

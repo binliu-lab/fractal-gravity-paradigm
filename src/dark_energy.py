@@ -71,12 +71,13 @@ def dark_energy_density(a, gamma=GAMMA,
     """
     分形暗能量密度演化
 
-    ρ_DE(a) = ρ_DE,0 · ((Ω_m0·a³ + Ω_Λ0) / (Ω_m0 + Ω_Λ0))^(-γ/25)
+    ρ_DE(a) = ρ_DE,0 · ((Ω_m0 + Ω_Λ0/a³) / (Ω_m0 + Ω_Λ0))^(+γ/25)
 
-    由连续性方程积分得到。
+    由连续性方程 dρ_DE/dln a = -3(1+w(a))ρ_DE 积分得到，
+    其中 w(a) = -1 + (γ/25)·Ω_Λ·a⁻³/(Ω_m + Ω_Λ·a⁻³)。
     """
-    ratio = (omega_m * a**3 + omega_lam) / (omega_m + omega_lam)
-    return ratio**(-gamma / 25.0)
+    ratio = (omega_m + omega_lam / a**3) / (omega_m + omega_lam)
+    return ratio**(gamma / 25.0)
 
 
 # ============================================================
@@ -147,18 +148,20 @@ def bbn_dark_energy_fraction(z_bbn=1e9):
     """
     BBN时期暗能量密度占比
 
-    在核合成时期 (z ~ 10^9)，暗能量密度占比：
-    Ω_DE(z_BBN) ≈ Ω_Λ0 · Ω_m0^(-γ/25) · (1+z)^(3γ/25 - 4)
+    在核合成时期 (z ~ 10^9)，宇宙以辐射为主，ρ_tot ≈ ρ_r ∝ a⁻⁴。
+    由 ρ_DE(a) ≈ ρ_DE,0 · Ω_Λ^(γ/25) · a^(-3γ/25)，故：
 
-    论文结论: ~10^{-32}，远小于约束阈值 10^{-4}
+    Ω_DE(z_BBN) ≈ Ω_Λ0^(1+γ/25) / Ω_r · (1+z)^(3γ/25 - 4)
+
+    论文结论: ~3×10^{-31}，远小于约束阈值 10^{-4}
     """
     gamma = GAMMA
 
-    # 高红移近似 (a << 1, Ω_Λ·a³ << Ω_m)
+    # 高红移近似 (a << 1, 辐射为主)
     exponent = 3.0 * gamma / 25.0 - 4.0
 
-    # Ω_DE(z) / Ω_m(z)
-    omega_de_ratio = (OMEGA_LAMBDA0 * OMEGA_M0**(-gamma / 25.0)
+    # Ω_DE(z) / Ω_r(z) — 辐射为主的正确前因子
+    omega_de_ratio = (OMEGA_LAMBDA0**(1.0 + gamma / 25.0) / OMEGA_R0
                       * (1.0 + z_bbn)**exponent)
 
     return omega_de_ratio

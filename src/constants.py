@@ -73,7 +73,8 @@ E_PLANCK_GEV = 1.2209e19  # GeV
 # 电子质量（MeV，实验锚定常数）
 M_ELECTRON_MEV = 0.510998950  # MeV (PDG2024)
 
-# 电子根层级基准 ν_e（由实验锚定）
+# 电子根层级基准 ν_e（精确恒等式：ν_e = log₂(m_P/m_e)）
+# 不是拟合参数，而是普朗克标度到电子标度的二分迭代层数
 NU_E = 74.34
 
 # ============================================================
@@ -108,6 +109,59 @@ SCHUMANN_FREQ = 7.83  # Hz
 # 舒曼共振对应层级
 NU_SCHUMANN = 190.0
 
+# ============================================================
+# 五量合一与五边形嵌套常数（第19-20章新增）
+# ============================================================
+
+# 五边形终极不变量 Ω = 4/(5φ) = 2(√5-1)/5
+OMEGA = 4.0 / (5.0 * PHI)
+
+# 五边形嵌套信息容量极限 I_total(∞) = Σ φ^(-2k) = φ
+I_TOTAL_LIMIT = PHI  # 1/(1-φ^(-2)) = φ
+
+# 五边形形状因子 F(φ) = 5sin(π/5)/π
+PENTAGON_SHAPE_FACTOR = 5.0 * np.sin(np.pi / 5.0) / np.pi
+
+# 五边形特征回音周期因子 φ^(-2) * F(φ)
+ECHO_PERIOD_FACTOR = PHI ** (-2.0) * PENTAGON_SHAPE_FACTOR
+
+# 最小损耗原理：层间传输效率 η = φ/2
+ETA_OPTIMAL = PHI / 2.0
+
+# 最小损耗原理：信息压缩率 r = 1/φ
+R_OPTIMAL = 1.0 / PHI
+
+# 脑电γ波核心频率（Hz）
+GAMMA_WAVE_FREQ = 40.0  # Hz
+
+# CMB退耦红移
+Z_REC = 1100.0
+
+# CMB退耦对应五边形层级
+K_REC = np.log(Z_REC + 1.0) / (2.0 * np.log(PHI))
+
+# ============================================================
+# 三才尺度（§4.5 精确推导，2026-08-02新增）
+# ============================================================
+
+# 人（电子质量标度）：ν_人 = log₂(m_P/m_e) = 74.34（精确）
+NU_HUMAN = NU_E  # 74.34
+
+# 地（谱维数过渡点）：ν_地 = φ² × ν_人 = 194.7（黄金比例自洽）
+NU_EARTH = PHI ** 2 * NU_HUMAN  # ≈ 194.7
+
+# 天（宇宙学标度）：ν_天 = 2 × ν_地 = 389.4
+NU_HEAVEN = 2.0 * NU_EARTH  # ≈ 389.4
+
+# ν*自洽值（从三才推导）：ν_地 × lnφ/ln2 = 135.2
+NU_STAR_SELF_CONSISTENT = NU_EARTH * np.log(PHI) / np.log(2.0)  # ≈ 135.2
+
+# ν*CMB校准值（从谱维数跑动方程反解）
+NU_STAR_CMB = 135.3  # 由 Ds(ν_rec=137.2)≈3.578 反解
+
+# 光谱层级换算因子：ν_f = γ × ν_m
+NU_SPECTRAL_CONVERSION = GAMMA  # γ = ln2/lnφ ≈ 1.441
+
 
 def print_constants():
     """打印所有几何常数的数值，用于验证"""
@@ -129,6 +183,18 @@ def print_constants():
     print(f"H_0 (哈勃常数)         = {H_0} km/s/Mpc")
     print(f"Ω_m0                   = {OMEGA_M0}")
     print(f"Ω_Λ0                   = {OMEGA_LAMBDA0}")
+    print(f"Ω (五量合一不变量)       = {OMEGA:.10f}")
+    print(f"I_total(∞) (信息容量极限)= {I_TOTAL_LIMIT:.10f}")
+    print(f"F(φ) (五边形形状因子)    = {PENTAGON_SHAPE_FACTOR:.6f}")
+    print(f"η_opt (最小损耗传输效率) = {ETA_OPTIMAL:.10f}")
+    print(f"k_rec (CMB退耦层级)      = {K_REC:.2f}")
+    print(f"\n三才尺度 (§4.5):")
+    print(f"  ν_人 (电子标度)        = {NU_HUMAN}")
+    print(f"  ν_地 (过渡点)          = {NU_EARTH:.1f}")
+    print(f"  ν_天 (宇宙学标度)       = {NU_HEAVEN:.1f}")
+    print(f"  ν*(自洽)               = {NU_STAR_SELF_CONSISTENT:.1f}")
+    print(f"  ν*(CMB校准)             = {NU_STAR_CMB}")
+    print(f"  交叉验证偏差             = {abs(NU_STAR_SELF_CONSISTENT - NU_STAR_CMB)/NU_STAR_CMB*100:.2f}%")
     print("=" * 60)
 
     # 验证关键恒等式
