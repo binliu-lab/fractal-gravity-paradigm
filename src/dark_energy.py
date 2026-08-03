@@ -273,7 +273,7 @@ def verify_all():
     print(f"   分形模型: {age_fractal:.2f} Gyr")
     print(f"   ΛCDM:     {age_lcdm:.2f} Gyr")
     print(f"   偏差:     {abs(age_fractal - age_lcdm)/age_lcdm*100:.2f}%")
-    print(f"   论文报告: ~137.3亿年 (分形) vs 137.9亿年 (ΛCDM)")
+    print(f"   论文报告: ~136.9亿年 (分形) vs 137.9亿年 (ΛCDM)")
 
     # 3. BBN兼容性
     print(f"\n3. BBN兼容性:")

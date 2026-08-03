@@ -1,8 +1,8 @@
 """
 普适几何常数模块
-Universal Geometric Constants for the Fractal Gravity Paradigm
+Universal Geometric Constants for the Qi-Field Fractal Gravity Framework
 
-论文《分形引力纲领》全局符号与规范说明中定义的全部常数。
+论文《炁场分形引力框架》全局符号与规范说明中定义的全部常数。
 所有常数均为精确数学表达式的数值实现，无拟合参数。
 """
 
@@ -166,7 +166,7 @@ NU_SPECTRAL_CONVERSION = GAMMA  # γ = ln2/lnφ ≈ 1.441
 def print_constants():
     """打印所有几何常数的数值，用于验证"""
     print("=" * 60)
-    print("分形引力纲领 — 普适几何常数")
+    print("炁场分形引力框架 — 普适几何常数")
     print("=" * 60)
     print(f"φ (黄金分割)           = {PHI:.10f}")
     print(f"γ (标度指数)           = {GAMMA:.10f}")

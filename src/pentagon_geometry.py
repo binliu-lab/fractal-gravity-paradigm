@@ -390,7 +390,7 @@ def verify_five_unification():
 def run_all():
     """运行全部五边形几何验证"""
     print("=" * 60)
-    print("分形引力纲领 — 五边形几何与五量合一验证")
+    print("炁场分形引力框架 — 五边形几何与五量合一验证")
     print("=" * 60)
 
     results = {}

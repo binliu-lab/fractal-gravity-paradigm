@@ -20,8 +20,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def main():
     print("\n" + "╔" + "═" * 60 + "╗")
-    print("║" + "  分形引力纲领：全部数值结果复现".center(48) + "║")
-    print("║" + "  Fractal Gravity Paradigm: Full Reproduction".center(48) + "║")
+    print("║" + "  炁场分形引力框架：全部数值结果复现".center(48) + "║")
+    print("║" + "  Qi-Field Fractal Gravity Framework".center(48) + "║")
     print("╚" + "═" * 60 + "╝\n")
 
     start_time = time.time()
@@ -127,7 +127,7 @@ def main():
     print("║")
     print("║  关键结果摘要:")
     print(f"║  ✓ 暗能量 w0 = {de_results['w0']:.4f} (论文: -0.9603)")
-    print(f"║  ✓ 宇宙年龄 = {de_results['age_fractal']:.1f} Gyr (论文: ~137.3)")
+    print(f"║  ✓ 宇宙年龄 = {de_results['age_fractal']:.1f} Gyr (论文: ~136.9)")
     print(f"║  ✓ BBN Ω_DE = {de_results['omega_de_bbn']:.1e} (约束: <1e-4)")
     print(f"║  ✓ CMB背景偏移 = {de_results['cmb_shift']:.3f}% (运动学积分; CLASS完整验证: -0.228%)")
     print(f"║  ✓ 五量合一 Ω = 4/(5φ) = {4.0/(5.0*1.6180339887498949):.6f}")

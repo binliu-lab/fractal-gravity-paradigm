@@ -108,3 +108,4 @@ golden_ratio_cover*.jpg
 golden_ratio_cover*.png
 xelatex_*.txt
 *_err*.txt
+push_via_api.py

@@ -1,0 +1,26 @@
+{
+  "critical_exponent": {
+    "theory": 0.45491502812526285,
+    "empirical": 0.449,
+    "deviation_pct": 1.31737820161756,
+    "closed_form": "(13 - 5*sqrt(5)) / 4",
+    "derivation": "Fisher relation gamma=(2-eta)*nu, eta=phi/2, nu=1/phi^2"
+  },
+  "constants": {
+    "phi": 1.618033988749895,
+    "eta": 0.8090169943749475,
+    "nu": 0.38196601125010515,
+    "beta_rushbrooke": 0.31762745781210566,
+    "d_josephson": 4.045084971874737
+  },
+  "eeg_verification": {
+    "phi": 1.618033988749895,
+    "wakeful_rest_D_range": [
+      1.6,
+      1.7
+    ],
+    "phi_in_range": true,
+    "closest_state": "Wakeful rest",
+    "deviation_pct": 1.975608143732641
+  }
+}

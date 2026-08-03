@@ -19,8 +19,10 @@ from scipy.optimize import minimize
 import warnings
 
 # 导入常数
-from constants import PHI
-import numpy as np
+try:
+    from .constants import PHI
+except ImportError:
+    from constants import PHI
 
 # ============================================================
 # 第一部分：D₅ → A₅ 生发路径

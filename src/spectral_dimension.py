@@ -270,7 +270,8 @@ def verify_all():
     print("=" * 60)
     print(f"\n基本参数:")
     print(f"  γ = ln2/lnφ = {GAMMA:.6f}")
-    print(f"  ν* = 137.2 (CMB退耦校准)")
+    print(f"  ν_rec = 137.2 (CMB退耦校准)")
+    print(f"  ν* = 135.3 (谱维数转变特征层级)")
 
     verify_cmb_recombination()
     verify_uv_ir_limits()

@@ -2,7 +2,7 @@
 CMB第一声学峰位偏移分析 — 双渠道合成（第10章）
 CMB First Acoustic Peak Shift: Two-Channel Analysis
 
-分形引力纲领对CMB第一峰位的修正包含两个独立渠道：
+炁场分形引力框架对CMB第一峰位的修正包含两个独立渠道：
 
 渠道一（背景层，P1阶段）：暗能量背景演化效应
   Δℓ₁/ℓ₁ = -0.228% (CLASS精确数值验证)
